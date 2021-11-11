@@ -1,28 +1,45 @@
 # Imports
-from tweepy.streaming import StreamListener
-from tweepy import OAuthHandler
-from tweepy import Stream
+import tweepy
+from tweepy import tweet
+from tweepy.api import API
 
 # Variables for user credentials for Twitter API
-access_token = "ENTER YOUR ACCESS TOKEN"
-access_token_secret = "ENTER YOUR ACCESS TOKEN SECRET"
-consumer_key = "ENTER YOUR API KEY"
-consumer_secret = "ENTER YOUR API SECRET"
+access_token = "24816620-I85JgN7tSuv1SgIXGHzivECgS5PBg4Smc2TyPxdLK"
+access_token_secret = "YmeOrculf2RwJ711CwB9PlKhvG7cT8B9eCvblRuTkPQBp"
+consumer_key = '5cSivldEXb2MbHhPD4vxc1tYQ'
+consumer_secret = 'f7m267xOpEC2b9oQYbCW0mfhGCdcmHt9hQXYSZUAAqiSflBfUc'
 
-# Listener that prints tweets to stdout
-class StdOutListener(StreamListener):
-    def on_data(self, data):
-        print(data)
-        return True
-    def on_error(self, status):
-        print(status)
+# Creating API object
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 
-if __name__ == "__main__":
-    # Handles Twitter authentication & the connection to Twitter streaming API
-    l = StdOutListener()
-    auth = OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    stream = Stream(auth, l)
+# Setting access token and secret
+auth.set_access_token(access_token,access_token_secret)
 
-    # This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
-    stream.filter(track=['python', 'javascript', 'ruby'])    
+# Creating API object while passing in auth info
+api = tweepy.API(auth)
+
+# 1. Timeline query:
+""" 
+publicTweets = api.home_timeline()
+for tweet in publicTweets:
+    print(f'Text: {tweet.text}')
+    print(f'Time: {tweet.created_at}')
+    print(f'User: {tweet.user.screen_name}')
+    print(f'Location: {tweet.user.location}')
+    print('###') """
+
+# 2. User tweets:
+""" 
+name = 'SpaceX'
+tweetCount = 5
+results = api.user_timeline(id=name,count=tweetCount)
+for tweet in results:
+    print(tweet.text) """
+
+# 3. Finding Tweets using keywords:
+
+query = 'SpaceX'
+language = 'en'
+results = api.search_tweets(q=query,lang=language)
+for tweet in results:
+    print(tweet.user.screen_name, "Tweeted: ",tweet.text)
